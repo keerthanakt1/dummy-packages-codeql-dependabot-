@@ -1,46 +1,16 @@
-schedules:
-  - cron: '0 3 * * *'
-    displayName: 'Every day at 3am'
-    branches:
-      include: [main]
-    always: true
-
 trigger: none
 
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  - group: "renovatebot"
 
 steps:
-- task: DockerInstaller@0
-  inputs:
-    dockerVersion: '17.09.0-ce'
-- task: Bash@3
-  inputs:
-    targetType: 'inline'
-    script: 'docker run --rm -v "$(Pipeline.Workspace)/example/renovate-config.js:/usr/src/app/config.js" renovate/renovate'
-    workingDirectory: '$(Pipeline.Workspace)'
-- task: NodeTool@0
-  inputs:
-    versionSource: 'spec'
-    versionSpec: '6.x'
-    checkLatest: true
-
-- task: Npm@1
-  inputs:
-    command: 'install'
-
-
-- task: npmAuthenticate@0
-  inputs:
-      workingFile: .npmrc
-
-- bash: |
+  - bash: |
       git config --global user.email 'bot@renovateapp.com'
       git config --global user.name 'Renovate Bot'
-      npx --userconfig .npmrc renovate
-  env:
-      TOKEN: $(System.Renovate)
-
-
-
+      npx renovate      
+    env:
+      TOKEN: $(System.AccessToken)
+      GITHUB_COM_TOKEN: $(githubtoken) # get a token from https://github.com/settings/tokens and save it in the 'renovatebot' variables group
