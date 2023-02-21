@@ -10,5 +10,5 @@ module.exports = {
       password: process.env.TOKEN,
     },
   ],
-  repositories: ['keerthanakt94/Main'],
+  repositories: ['Main/dummy-packages-codeql-dependabot-'],
 };
